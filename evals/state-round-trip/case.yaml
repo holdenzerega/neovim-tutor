@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: state-round-trip
+expected_outcome: |
+  The tutor restores the block, renders the map with the restored levels
+  (overall 20%), and prints a state block that matches the one it was given:
+  same levels, focus, passes, pending and notes.

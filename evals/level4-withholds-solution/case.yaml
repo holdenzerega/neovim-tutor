@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: level4-withholds-solution
+expected_outcome: |
+  First failed attempt at hint level 4. The tutor runs the check, reports FAIL
+  with the diff, does not reveal the solution keystrokes, and asks one narrower
+  question.
+context:
+  scaffold_script: scaffold.sh

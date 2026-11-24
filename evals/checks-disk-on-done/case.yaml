@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: checks-disk-on-done
+expected_outcome: |
+  The file on disk is still unsolved. The tutor runs scripts/check.sh first-save
+  instead of trusting the learner, reports FAIL with the diff showing the missing
+  third line, gives no credit, and asks one question about what happened.
+context:
+  scaffold_script: scaffold.sh

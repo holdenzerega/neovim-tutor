@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: level4-reveals-after-second-fail
+expected_outcome: |
+  Second failed attempt at hint level 4. The tutor runs the check, reports FAIL,
+  now shows the Solution for dot-repeat, counts no pass for it, and says the idea
+  will be re-tested on a different Line edits exercise.
+context:
+  scaffold_script: scaffold.sh

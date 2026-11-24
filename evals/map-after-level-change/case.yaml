@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: map-after-level-change
+expected_outcome: |
+  The file on disk is solved. The tutor runs the check, reports PASS, raises
+  Orientation from 1 to 2 (second pass at hint level 2, a different exercise, a
+  spaced review), and renders the full eight-row skill map showing Orientation at
+  2/5 with an overall percentage consistent with the levels shown.
+context:
+  scaffold_script: scaffold.sh
