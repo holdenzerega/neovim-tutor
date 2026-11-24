@@ -4,15 +4,17 @@ A Claude Code skill that coaches you to edit files directly in Neovim: open the 
 file, move to the right place, change exactly what needs changing, save, and recover
 from mistakes.
 
-It is a Socratic tutor with one firm rule: exercises happen in a real Neovim on real
-files, and the tutor checks the file on disk. It never takes your word for what you
-typed.
+It is a Socratic tutor, in the spirit of Jane Street's `socratic-tutor`: no fixed
+lesson plan and no answer key. You bring the edit you actually need to make in your
+own code or config; when you have none, the tutor writes a short practice file on the
+spot. One rule never bends: the tutor checks the file on disk. It snapshots the file
+before you start, diffs it when you say "done", and never takes your word for what
+you typed.
 
 - 8 subskills, from "which mode am I in" to `:g` and recovering from mistakes
-- 24 exercises, each a scratch file under `~/nvim-dojo/` with a planted problem
 - Hints fade as you improve: numbered keystrokes, then command names, then only the
   goal, then the goal with a keystroke budget
-- A level goes up only after two passes on different exercises, one of them an
+- A level goes up only after two verified passes on different tasks, one of them an
   unannounced review
 - A skill map, and `save state` / `resume from:` to carry progress between sessions
 
@@ -21,13 +23,16 @@ on Omarchy Linux). Run Claude Code in one terminal and Neovim in another.
 
 ## A 30-second demo
 
-An excerpt from the middle of a session, working on line edits at level 2:
-
 ```text
-claude  Exercise json-comma is set up. Open the file in your other terminal and
-        follow these keystrokes:
+you     coach me through this edit in neovim: ~/work/settings.json line 27
+        reads ,} and should be },
 
-          1. nvim ~/nvim-dojo/json-comma.json  Enter
+claude  $ scripts/snapshot.sh ~/work/settings.json
+
+        Snapshot taken, so nothing you do in there is unrecoverable. In your other
+        terminal:
+
+          1. nvim ~/work/settings.json  Enter
           2. :27  Enter     jump to line 27
           3. cc             clear the line and enter INSERT; the indent is kept
           4. },             brace first, then the comma
@@ -38,21 +43,33 @@ claude  Exercise json-comma is set up. Open the file in your other terminal and
 
 you     done
 
-claude  $ scripts/check.sh json-comma
-        jq: parse error: Expected another key-value pair at line 27, column 4
-        FAIL json-comma
+claude  $ scripts/compare.sh ~/work/settings.json
+        snapshot: ~/nvim-dojo/snapshots/%home%you%work%settings.json.20261124-091502
+        UNCHANGED
 
-        FAIL. The file does not parse as JSON, and the error points at line 27.
-        What does a comma separate in JSON: does it belong before the closing
-        brace, or between the brace and the next key?
+        FAIL. Nothing reached the disk. When you typed :27, which file name
+        did the statusline at the bottom show?
 
-you     between the brace and the next key. I typed ,} again. fixed it. done
+you     it said "noice" or something. the message window was open. fixed, done
 
-claude  $ scripts/check.sh json-comma
-        PASS json-comma
+claude  $ scripts/compare.sh ~/work/settings.json
+        snapshot: ~/nvim-dojo/snapshots/%home%you%work%settings.json.20261124-091502
+        --- before
+        +++ on disk
+        @@ -24,7 +24,7 @@
+             "confirmSync": false,
+             "defaultBranch": "main",
+             "pruneOnFetch": true
+        -  ,}
+        +  },
+           "telemetry": {
+             "enabled": false
+           }
+        CHANGED
+        $ jq -e . ~/work/settings.json > /dev/null && echo valid
+        valid
 
-        PASS. That is one pass for line edits at level 2. The second has to come
-        from a different exercise, later and unannounced. Next: moving.
+        PASS: exactly that change, and the file parses again.
 ```
 
 ## Install
@@ -72,20 +89,15 @@ npx skills add holdenzerega/neovim-tutor
 
 Then start a new Claude Code session and say "teach me neovim".
 
-### Requirements
-
-- Neovim with the LazyVim config. Other configs work for most exercises; `picker`
-  relies on LazyVim's `Space Space` file picker.
-- `bash`, `diff`, `sed` and `jq`.
-- `wl-copy` and `wl-paste` (the `wl-clipboard` package, Wayland) for the three
-  clipboard exercises: `clipboard-in`, `clipboard-out`, `paste-indent`.
+Requirements: Neovim with LazyVim (other configs work, but the hints assume
+LazyVim's keys and quirks), `bash` and `diff`.
 
 ## Using it
 
-Say any of these to start a session:
+Start a session with any of:
 
 - "teach me neovim" or "neovim tutor"
-- "coach me through this edit in neovim"
+- "coach me through this edit in neovim: <file> <what should change>"
 - "drill me on vim motions"
 - "help me get better at neovim"
 
@@ -93,53 +105,40 @@ During a session:
 
 | Say | What happens |
 |---|---|
-| `done` | The tutor runs the check on the file and reports PASS or FAIL with the diff |
+| `done` | The tutor diffs the file against its snapshot and reports PASS or FAIL |
 | `show progress` | The skill map |
-| `harder` / `easier` | Fewer or more hints for the current subskill |
-| `just tell me` | The solution for the current exercise, which then does not count |
+| `harder` / `easier` | Fewer or more hints |
+| `just tell me` | The keystrokes for the current task, which then does not count |
 | `save state` | A short text block holding your levels and passes |
 | `resume from:` plus that block | Continue in a new session |
 
 A one-off question such as "what does dd do" gets a plain answer, not a session.
 
-## Layout
+## How the check works
 
 ```text
-SKILL.md        instructions the agent follows
-exercises/      24 exercises, one markdown file each
-scripts/        setup.sh <id> and check.sh <id> run an exercise's Setup or Check block
-evals/          test cases for the skill's behaviour
+scripts/snapshot.sh <file>   copies the file to ~/nvim-dojo/snapshots/ before you edit it
+scripts/compare.sh <file>    diffs the latest snapshot against the file on disk; prints
+                             CHANGED or UNCHANGED, and OPEN if Neovim still has the file
 ```
 
-Each exercise file has frontmatter (`id`, `subskill`, `level`, `title`) and five
-sections: Setup, Goal, Check, Solution, Mistakes. To see the catalogue:
-
-```bash
-scripts/setup.sh
-```
-
-To try one by hand:
-
-```bash
-scripts/setup.sh first-save     # writes ~/nvim-dojo/first-save.txt
-nvim ~/nvim-dojo/first-save.txt # make the edit described under Goal
-scripts/check.sh first-save     # prints a diff, then PASS or FAIL
-```
-
-Everything the exercises write lives under `~/nvim-dojo/`. Delete that folder at any
-time; setup recreates what it needs.
+The tutor passes an attempt only when the diff is exactly the change you meant and,
+where one applies, a validity check (`jq`, `bash -n`, your project's tests) passes.
+If an edit goes badly wrong, the snapshot is the way back: the tutor offers to copy it
+over the file and does so only if you agree. Practice files and snapshots live under
+`~/nvim-dojo/`; delete that folder whenever you like.
 
 ## Evals
 
-`evals/` holds one folder per test case in the layout that `claude plugin eval` reads.
-From the repository root:
+`evals/` holds one folder per test case in the layout `claude plugin eval` reads. From
+the repository root:
 
 ```bash
 claude plugin eval . --scaffold --allow-tools Bash
 ```
 
-`--scaffold` lets four cases plant an exercise file before the run. Each run is a
-real, billed model call.
+`--scaffold` lets six cases plant a file before the run. Each run is a real, billed
+model call.
 
 ## License and credits
 

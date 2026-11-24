@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-The passes line of the state block contains exactly these seven entries and no others: first-save@3, popup-escape@3r, two-files@2, picker@2r, stray-marks@2, search-hops@2r, json-comma@2.
+The passes line of the state block contains exactly these seven entries in this order and no others: 1@3 2@2 1@3r 3@2 2@2r 3@2r 4@2.

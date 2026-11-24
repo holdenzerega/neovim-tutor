@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# Plant exercise popup-escape in this run's home before the agent starts.
+# Plant the file this case is about and snapshot it, as the tutor would have.
 set -eu
-bash "$(dirname "$0")/../../scripts/setup.sh" popup-escape > /dev/null
-# The learner has solved it: put the expected file in place.
-cp ~/nvim-dojo/.expected/popup-escape.txt ~/nvim-dojo/popup-escape.txt
+mkdir -p "$(dirname ~/nvim-dojo/modes.txt)"
+cat > ~/nvim-dojo/modes.txt <<'FILE'
+mode when Neovim opens: NORMAL
+mode after pressing i: INSERT
+FILE
+bash "$(dirname "$0")/../../scripts/snapshot.sh" ~/nvim-dojo/modes.txt > /dev/null
+# The learner has since made the edit:
+echo 'mode after pressing Esc: NORMAL' >> ~/nvim-dojo/modes.txt

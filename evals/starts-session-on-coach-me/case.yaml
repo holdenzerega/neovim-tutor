@@ -1,6 +1,6 @@
 schema_version: "1.1"
 name: starts-session-on-coach-me
 expected_outcome: |
-  The neovim-tutor skill is used. The reply opens a coached session: it says
-  placement comes first and that exercises need Neovim in a second terminal, asks
-  what the learner can already do in Neovim, and stops there without teaching.
+  The neovim-tutor skill is used. The first reply asks one question, whether a
+  real edit is waiting or what the learner can already do, and teaches nothing
+  yet.

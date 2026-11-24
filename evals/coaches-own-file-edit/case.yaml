@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: coaches-own-file-edit
+expected_outcome: |
+  The tutor works on the learner's own file: it snapshots ~/work/settings.json
+  before anything else, does not edit the file itself, and gives numbered
+  keystrokes for this exact edit (open the file, go to line 27, change it to },
+  , leave INSERT, save), ending by asking the learner to say done.
+context:
+  scaffold_script: scaffold.sh

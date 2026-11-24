@@ -16,9 +16,10 @@ strict evaluation, spaced review, a final assessment, and the learner commands
 
 ## What is different
 
-The text is rewritten and specialised for Neovim. The curriculum, the exercises,
-the two scripts, and the rule that every attempt is judged by a check on the file
-on disk are original to this repository.
+The text is rewritten and specialised for Neovim. Like the original, it has no
+fixed lesson plan and works on whatever the learner brings. The curriculum, the
+snapshot and compare scripts, and the rule that every attempt is judged by a diff
+of the file on disk are original to this repository.
 
 ## Upstream license
 
