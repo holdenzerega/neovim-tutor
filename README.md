@@ -60,14 +60,14 @@ claude  $ scripts/check.sh json-comma
 Clone the repository and link it into your Claude Code skills folder:
 
 ```bash
-git clone https://github.com/one4eyed2king/neovim-tutor.git ~/Projects/neovim-tutor
+git clone https://github.com/holdenzerega/neovim-tutor.git ~/Projects/neovim-tutor
 ln -s ~/Projects/neovim-tutor ~/.claude/skills/neovim-tutor
 ```
 
 Or with the [skills](https://github.com/vercel-labs/skills) CLI:
 
 ```bash
-npx skills add one4eyed2king/neovim-tutor
+npx skills add holdenzerega/neovim-tutor
 ```
 
 Then start a new Claude Code session and say "teach me neovim".
