@@ -44,7 +44,7 @@ claude  $ scripts/snapshot.sh ~/work/settings.json
 you     done
 
 claude  $ scripts/compare.sh ~/work/settings.json
-        snapshot: ~/nvim-dojo/snapshots/%home%you%work%settings.json.20261124-091502
+        snapshot: ~/nvim-dojo/snapshots/home/you/work/settings.json.20261124-091502
         UNCHANGED
 
         FAIL. Nothing reached the disk. When you typed :27, which file name
@@ -53,7 +53,7 @@ claude  $ scripts/compare.sh ~/work/settings.json
 you     it said "noice" or something. the message window was open. fixed, done
 
 claude  $ scripts/compare.sh ~/work/settings.json
-        snapshot: ~/nvim-dojo/snapshots/%home%you%work%settings.json.20261124-091502
+        snapshot: ~/nvim-dojo/snapshots/home/you/work/settings.json.20261124-091502
         --- before
         +++ on disk
         @@ -24,7 +24,7 @@

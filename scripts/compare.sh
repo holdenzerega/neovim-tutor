@@ -4,9 +4,9 @@
 set -uo pipefail
 f="$(realpath "$1")"
 key="$(printf %s "$f" | tr / %)"
-snap="$(ls -1 "$HOME/nvim-dojo/snapshots/$key".* 2>/dev/null | tail -1)"
+snap="$(ls -1 "$HOME/nvim-dojo/snapshots$f".[0-9]*-[0-9]* 2>/dev/null | tail -1)"
 [ -n "$snap" ] || { echo "no snapshot of $f; run snapshot.sh first" >&2; exit 2; }
-echo "snapshot: $snap"
+echo "snapshot: ${snap/#"$HOME"/\~}"
 if diff -u --label before --label "on disk" "$snap" "$f"; then echo UNCHANGED; else echo CHANGED; fi
 # Neovim names a file's swap file after its path, with / replaced by %.
 if ls "${XDG_STATE_HOME:-$HOME/.local/state}/nvim/swap" 2>/dev/null | grep -qF "$key.sw"; then
